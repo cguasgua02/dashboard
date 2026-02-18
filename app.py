@@ -14,37 +14,28 @@ DEFAULT_RESUMEN = {
     "Citas agendadas": 180,
     "Citas asistidas": 140,
     "Pacientes cerrados": 90,
-    "Tasa de conversión Lead → Cita": "56%",
-    "Tasa de asistencia (Show rate)": "77%",
-    "Tasa de cierre (Asistencia → Paciente)": "64%",
-    "Tasa de No-Show": "23%",
-    "Ticket promedio ($)": 300,
-    "Ingreso estimado ($)": 27000,
+    "Tasa de conversión Lead → Cita": 56.0,
+    "Tasa de asistencia (Show rate)": 77.0,
+    "Tasa de cierre (Asistencia → Paciente)": 64.0,
+    "Tasa de No-Show": 23.0,
+    "Ticket promedio ($)": 300.0,
+    "Ingreso estimado ($)": 27000.0,
 }
 
-DEFAULT_PIPELINE = pd.DataFrame(
-    {
-        "Etapa": ["Nuevo", "Contactado", "Agendado", "Asistió", "Cerrado", "No Show"],
-        "Cantidad": [80, 70, 60, 45, 30, 15],
-    }
-)
+DEFAULT_PIPELINE = {
+    "Nuevo": 80,
+    "Contactado": 70,
+    "Agendado": 60,
+    "Asistió": 45,
+    "Cerrado": 30,
+    "No Show": 15,
+}
 
-DEFAULT_CANALES = pd.DataFrame(
-    {
-        "Canal": ["Instagram Ads", "Google Ads", "Facebook Ads", "Web / Orgánico"],
-        "leads": [100, 80, 90, 50],
-        "citas": [60, 50, 45, 25],
-        "pacientes": [35, 30, 20, 10],
-    }
-)
-
-DEFAULT_CUELLOS = pd.DataFrame(
-    {
-        "Etapa": ["Lead → Cita", "Cita → Asistencia", "Asistencia → Cierre"],
-        "Conversión": ["56%", "77%", "64%"],
-    }
-)
-
+DEFAULT_CUELLOS = {
+    "Lead → Cita": 56.0,
+    "Cita → Asistencia": 77.0,
+    "Asistencia → Cierre": 64.0,
+}
 
 st.markdown(
     """
@@ -107,20 +98,21 @@ st.markdown(
 )
 
 
-def read_csv_or_default(uploaded_file, default_df, local_path: Path | None = None):
-    if uploaded_file is None:
-        if local_path is not None and local_path.exists():
-            return pd.read_csv(local_path)
-        return default_df.copy()
-    return pd.read_csv(uploaded_file)
+def read_csv_or_default(default_values: dict[str, float], local_path: Path | None = None) -> dict[str, float]:
+    if local_path is None or not local_path.exists():
+        return default_values.copy()
 
+    data = pd.read_csv(local_path)
+    if {"metrica", "valor"}.issubset(data.columns):
+        mapped = {}
+        for _, row in data.iterrows():
+            try:
+                mapped[str(row["metrica"])] = float(str(row["valor"]).replace("$", "").replace("%", ""))
+            except ValueError:
+                continue
+        return {**default_values, **mapped}
 
-def to_float(value, percent: bool = False) -> float:
-    if isinstance(value, (int, float)):
-        return float(value)
-    text = str(value).replace("$", "").replace(",", "").replace("%", "").strip()
-    number = float(text)
-    return number / 100 if percent else number
+    return default_values.copy()
 
 
 def module_card(title: str, value: str, note: str = "") -> None:
@@ -136,50 +128,116 @@ def module_card(title: str, value: str, note: str = "") -> None:
     )
 
 
+resumen_base = read_csv_or_default(DEFAULT_RESUMEN, DATA_DIR / "resumen.csv")
+
 with st.sidebar:
-    st.header("Fuente de datos (CSV)")
-    st.markdown("Exporta desde Excel y carga aquí tus archivos.")
+    st.header("Entrada manual de datos")
+    st.caption("Actualiza los números y el dashboard se refresca en tiempo real.")
 
-    resumen_file = st.file_uploader("Resumen (metrica, valor)", type=["csv"], key="resumen")
-    pipeline_file = st.file_uploader("Pipeline (Etapa, Cantidad)", type=["csv"], key="pipeline")
-    canales_file = st.file_uploader("Canales (Canal, leads, citas, pacientes)", type=["csv"], key="canales")
-    cuellos_file = st.file_uploader("Cuellos (Etapa, Conversión)", type=["csv"], key="cuellos")
+    st.subheader("Resumen general")
+    leads_totales = st.number_input("Leads totales", min_value=0, value=int(resumen_base["Leads totales"]), step=1)
+    leads_calificados = st.number_input(
+        "Leads calificados", min_value=0, value=int(resumen_base["Leads calificados"]), step=1
+    )
+    citas_agendadas = st.number_input(
+        "Citas agendadas", min_value=0, value=int(resumen_base["Citas agendadas"]), step=1
+    )
+    citas_asistidas = st.number_input(
+        "Citas asistidas", min_value=0, value=int(resumen_base["Citas asistidas"]), step=1
+    )
+    pacientes_cerrados = st.number_input(
+        "Pacientes cerrados", min_value=0, value=int(resumen_base["Pacientes cerrados"]), step=1
+    )
 
-if resumen_file is not None:
-    resumen_df = pd.read_csv(resumen_file)
-    resumen = dict(zip(resumen_df["metrica"], resumen_df["valor"]))
-elif (DATA_DIR / "resumen.csv").exists():
-    resumen_df = pd.read_csv(DATA_DIR / "resumen.csv")
-    resumen = dict(zip(resumen_df["metrica"], resumen_df["valor"]))
-else:
-    resumen = DEFAULT_RESUMEN
+    st.subheader("Tasas (%)")
+    tasa_lead_cita = st.number_input(
+        "Lead → Cita (%)", min_value=0.0, max_value=100.0, value=float(resumen_base["Tasa de conversión Lead → Cita"]), step=0.1
+    )
+    show_rate = st.number_input(
+        "Show rate (%)", min_value=0.0, max_value=100.0, value=float(resumen_base["Tasa de asistencia (Show rate)"]), step=0.1
+    )
+    tasa_cierre = st.number_input(
+        "Asistencia → Cierre (%)",
+        min_value=0.0,
+        max_value=100.0,
+        value=float(resumen_base["Tasa de cierre (Asistencia → Paciente)"]),
+        step=0.1,
+    )
+    tasa_no_show = st.number_input(
+        "No-Show (%)", min_value=0.0, max_value=100.0, value=float(resumen_base["Tasa de No-Show"]), step=0.1
+    )
 
-pipeline_df = read_csv_or_default(pipeline_file, DEFAULT_PIPELINE, DATA_DIR / "pipeline.csv")
-canales_df = read_csv_or_default(canales_file, DEFAULT_CANALES, DATA_DIR / "canales.csv")
-cuellos_df = read_csv_or_default(cuellos_file, DEFAULT_CUELLOS, DATA_DIR / "cuellos.csv")
+    ticket_promedio = st.number_input(
+        "Ticket promedio ($)", min_value=0.0, value=float(resumen_base["Ticket promedio ($)"]), step=10.0
+    )
+    ingreso_estimado = st.number_input(
+        "Ingreso estimado ($)", min_value=0.0, value=float(resumen_base["Ingreso estimado ($)"]), step=100.0
+    )
+
+    st.subheader("Pipeline")
+    pipeline_values = {}
+    for stage, default_value in DEFAULT_PIPELINE.items():
+        pipeline_values[stage] = st.number_input(stage, min_value=0, value=default_value, step=1)
+
+    st.subheader("Cuellos de botella (%)")
+    cuello_values = {}
+    for stage, default_value in DEFAULT_CUELLOS.items():
+        cuello_values[stage] = st.number_input(stage, min_value=0.0, max_value=100.0, value=default_value, step=0.1)
+
+    st.subheader("Proyección")
+    no_show_pacientes = st.number_input("No-shows actuales", min_value=0, value=40, step=1)
+    recuperables_pct = st.number_input("% recuperables", min_value=0.0, max_value=100.0, value=50.0, step=1.0)
+
+resumen = {
+    "Leads totales": leads_totales,
+    "Leads calificados": leads_calificados,
+    "Citas agendadas": citas_agendadas,
+    "Citas asistidas": citas_asistidas,
+    "Pacientes cerrados": pacientes_cerrados,
+    "Tasa de conversión Lead → Cita": tasa_lead_cita,
+    "Tasa de asistencia (Show rate)": show_rate,
+    "Tasa de cierre (Asistencia → Paciente)": tasa_cierre,
+    "Tasa de No-Show": tasa_no_show,
+    "Ticket promedio ($)": ticket_promedio,
+    "Ingreso estimado ($)": ingreso_estimado,
+}
+
+pipeline_df = pd.DataFrame({"Etapa": list(pipeline_values.keys()), "Cantidad": list(pipeline_values.values())})
+cuellos_df = pd.DataFrame({"Etapa": list(cuello_values.keys()), "Conversión": [f"{v:.1f}%" for v in cuello_values.values()]})
+
+canales_df = pd.DataFrame(
+    {
+        "Canal": ["Instagram Ads", "Google Ads", "Facebook Ads", "Web / Orgánico"],
+        "leads": [100, 80, 90, 50],
+        "citas": [60, 50, 45, 25],
+        "pacientes": [35, 30, 20, 10],
+    }
+)
+canales_df["Conv. cita %"] = (canales_df["citas"] / canales_df["leads"] * 100).round(1)
+canales_df["Conv. cierre %"] = (canales_df["pacientes"] / canales_df["citas"] * 100).round(1)
 
 st.title("Dashboard de Conversión Clínica")
-st.caption("Vista modular estilo operaciones clínicas. Ajusta los datos con CSV desde la barra lateral.")
+st.caption("Diseño modular con entrada manual en la barra izquierda.")
 
 col_top_1, col_top_2, col_top_3, col_top_4 = st.columns(4)
 with col_top_1:
-    module_card("Leads totales", f"{int(to_float(resumen.get('Leads totales', 0)))}", "Leads recibidos")
+    module_card("Leads totales", f"{resumen['Leads totales']:,}", "Leads recibidos")
 with col_top_2:
-    module_card("Leads calificados", f"{int(to_float(resumen.get('Leads calificados', 0)))}", "Potencial real")
+    module_card("Leads calificados", f"{resumen['Leads calificados']:,}", "Potencial real")
 with col_top_3:
-    module_card("Citas agendadas", f"{int(to_float(resumen.get('Citas agendadas', 0)))}", "Agenda comercial")
+    module_card("Citas agendadas", f"{resumen['Citas agendadas']:,}", "Agenda comercial")
 with col_top_4:
-    module_card("Pacientes cerrados", f"{int(to_float(resumen.get('Pacientes cerrados', 0)))}", "Cierres totales")
+    module_card("Pacientes cerrados", f"{resumen['Pacientes cerrados']:,}", "Cierres totales")
 
 col_rate_1, col_rate_2, col_rate_3, col_rate_4 = st.columns(4)
 with col_rate_1:
-    module_card("Lead → Cita", str(resumen.get("Tasa de conversión Lead → Cita", "56%")), "Conversión a cita")
+    module_card("Lead → Cita", f"{resumen['Tasa de conversión Lead → Cita']:.1f}%", "Conversión a cita")
 with col_rate_2:
-    module_card("Show rate", str(resumen.get("Tasa de asistencia (Show rate)", "77%")), "Asistencia a cita")
+    module_card("Show rate", f"{resumen['Tasa de asistencia (Show rate)']:.1f}%", "Asistencia a cita")
 with col_rate_3:
-    module_card("Asistencia → Cierre", str(resumen.get("Tasa de cierre (Asistencia → Paciente)", "64%")), "Tasa de cierre")
+    module_card("Asistencia → Cierre", f"{resumen['Tasa de cierre (Asistencia → Paciente)']:.1f}%", "Tasa de cierre")
 with col_rate_4:
-    module_card("No-Show", str(resumen.get("Tasa de No-Show", "23%")), "Citas perdidas")
+    module_card("No-Show", f"{resumen['Tasa de No-Show']:.1f}%", "Citas perdidas")
 
 left, right = st.columns([1.45, 1])
 
@@ -220,44 +278,21 @@ with left:
 
 with right:
     st.markdown('<div class="section-box"><h3>Rendimiento por canal</h3></div>', unsafe_allow_html=True)
-    canales_df["Conv. cita %"] = (canales_df["citas"] / canales_df["leads"] * 100).round(1)
-    canales_df["Conv. cierre %"] = (canales_df["pacientes"] / canales_df["citas"] * 100).round(1)
     st.dataframe(canales_df, use_container_width=True, hide_index=True)
 
     st.markdown('<div class="section-box"><h3>Cuellos de botella</h3></div>', unsafe_allow_html=True)
     st.table(cuellos_df)
 
-    ticket = to_float(resumen.get("Ticket promedio ($)", 0))
-    no_show_pacientes = int(to_float(resumen.get("Citas agendadas", 0)) - to_float(resumen.get("Citas asistidas", 0)))
-    recuperables = int(no_show_pacientes * 0.5)
-    extra_ingresos = int(recuperables * ticket)
+    recuperables = int(no_show_pacientes * (recuperables_pct / 100))
+    extra_ingresos = int(recuperables * ticket_promedio)
 
     st.markdown('<div class="section-box"><h3>Proyección de ingresos</h3></div>', unsafe_allow_html=True)
     p_col_1, p_col_2 = st.columns(2)
     with p_col_1:
         module_card("No-shows actuales", str(no_show_pacientes), "Pacientes perdidos")
     with p_col_2:
-        module_card("Recuperables (50%)", str(recuperables), "Potencial de rescate")
+        module_card("Recuperables", str(recuperables), f"{recuperables_pct:.0f}% de recuperación")
     module_card("Ingreso adicional potencial", f"${extra_ingresos:,.0f}", "Ticket promedio aplicado")
 
 st.markdown("---")
-st.markdown("#### Plantillas CSV")
-st.code(
-    """# resumen.csv
-metrica,valor
-Leads totales,320
-Leads calificados,240
-Citas agendadas,180
-Citas asistidas,140
-Pacientes cerrados,90
-
-# pipeline.csv
-Etapa,Cantidad
-Nuevo,80
-Contactado,70
-Agendado,60
-Asistió,45
-Cerrado,30
-No Show,15""",
-    language="text",
-)
+st.info("Tip: cada cambio en el panel izquierdo actualiza en tiempo real todo el dashboard.")
