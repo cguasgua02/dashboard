@@ -1,6 +1,6 @@
 # Dashboard de Conversión Clínica
 
-Dashboard online en Streamlit con diseño modular para seguimiento comercial clínico.
+Dashboard en Streamlit con diseño modular y flujo de captura en 3 etapas con validación de coherencia.
 
 ## Ejecutar localmente
 
@@ -9,18 +9,55 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## ¿Cómo funciona?
+## Flujo recomendado (implementado)
 
-- En la **barra lateral izquierda** tienes un formulario para capturar:
-  - Leads, citas y pacientes cerrados.
-  - Tasas de conversión y no-show.
-  - Conteo por etapa del pipeline.
-  - Conversiones por cuello de botella.
-  - Parámetros de proyección de ingresos.
-- El dashboard se actualiza **en tiempo real** conforme editas cada valor.
+### Etapa 1: Leads por canal
+Completa la tabla por canal con:
+- `leads`
+- `citas`
+- `pacientes`
 
-## Datos iniciales
+El sistema calcula automáticamente:
+- `Conv. cita %`
+- `Conv. cierre %`
 
-- El sistema parte con valores por defecto.
-- Si existe `data/resumen.csv`, se usa para precargar métricas base.
-- No se requieren cargas manuales de CSV por parte del usuario final.
+> Si cambias la etapa 1 y guardas, la etapa 2 se reinicia con valores sugeridos para evitar inconsistencias.
+
+### Etapa 2: Resumen y pipeline
+Captura:
+- leads totales
+- leads calificados/contactados
+- citas agendadas
+- citas asistidas
+- citas no asistidas
+- pacientes cerrados
+
+Con estos datos el sistema calcula automáticamente:
+- Lead → Cita
+- Show rate
+- Asistencia → Cierre
+- No-Show rate
+
+Y además construye el Pipeline:
+- Nuevo
+- Contactado
+- Agendado
+- Asistió
+- Cerrado
+- No Show
+
+### Etapa 3: Proyección
+Captura:
+- ticket promedio
+- % recuperación de no-shows
+
+Y calcula ingreso adicional potencial.
+
+## Validaciones cruzadas
+Al pulsar **Actualizar dashboard**, el sistema valida:
+- suma de leads por canal = leads totales
+- suma de citas por canal = citas agendadas
+- suma de pacientes por canal = pacientes cerrados
+- citas no asistidas = citas agendadas - citas asistidas
+
+Si hay errores, muestra mensajes y no actualiza el dashboard hasta que todo sea coherente.
