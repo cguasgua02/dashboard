@@ -1,6 +1,6 @@
 # Dashboard de Conversión Clínica
 
-Dashboard online en Streamlit para clínicas que gestionan sus datos en Excel/CSV.
+Dashboard online en Streamlit con diseño modular para seguimiento comercial clínico.
 
 ## Ejecutar localmente
 
@@ -9,19 +9,18 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Estructura de datos
+## ¿Cómo funciona?
 
-Puedes usar los CSV de ejemplo en `data/` o cargar los tuyos desde la barra lateral del dashboard.
+- En la **barra lateral izquierda** tienes un formulario para capturar:
+  - Leads, citas y pacientes cerrados.
+  - Tasas de conversión y no-show.
+  - Conteo por etapa del pipeline.
+  - Conversiones por cuello de botella.
+  - Parámetros de proyección de ingresos.
+- El dashboard se actualiza **en tiempo real** conforme editas cada valor.
 
-- `resumen.csv`: columnas `metrica, valor`
-- `pipeline.csv`: columnas `Etapa, Cantidad`
-- `canales.csv`: columnas `Canal, leads, citas, pacientes`
-- `cuellos.csv`: columnas `Etapa, Conversión`
+## Datos iniciales
 
-## Flujo
-
-1. Resumen general de KPIs.
-2. Pipeline visual por etapas.
-3. Análisis por canal (barras + tabla de conversiones).
-4. Cuellos de botella.
-5. Proyección de ingresos por recuperación de no-shows.
+- El sistema parte con valores por defecto.
+- Si existe `data/resumen.csv`, se usa para precargar métricas base.
+- No se requieren cargas manuales de CSV por parte del usuario final.
