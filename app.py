@@ -165,82 +165,71 @@ def init_state() -> None:
 
 def stage1_form() -> None:
     st.sidebar.markdown("### 1) Leads por canal")
-    with st.sidebar.form("stage1_form"):
-        edited = st.data_editor(
-            st.session_state.stage1_channels,
-            hide_index=True,
-            use_container_width=True,
-            num_rows="fixed",
-            disabled=["Canal"],
-            column_config={
-                "leads": st.column_config.NumberColumn("leads", min_value=0, step=1),
-                "citas": st.column_config.NumberColumn("citas", min_value=0, step=1),
-                "pacientes": st.column_config.NumberColumn("pacientes", min_value=0, step=1),
-            },
+    edited = st.sidebar.data_editor(
+        st.session_state.stage1_channels,
+        hide_index=True,
+        use_container_width=True,
+        num_rows="fixed",
+        disabled=["Canal"],
+        column_config={
+            "leads": st.column_config.NumberColumn("leads", min_value=0, step=1),
+            "citas": st.column_config.NumberColumn("citas", min_value=0, step=1),
+            "pacientes": st.column_config.NumberColumn("pacientes", min_value=0, step=1),
+        },
+    )
+
+    st.session_state.stage1_channels = edited.astype({"leads": int, "citas": int, "pacientes": int})
+    new_signature = tuple(edited[["leads", "citas", "pacientes"]].to_numpy().flatten())
+
+    if new_signature != st.session_state.stage1_signature:
+        suggested = build_default_summary(st.session_state.stage1_channels)
+        st.session_state.stage2_summary = suggested
+        st.session_state.stage1_signature = new_signature
+        st.sidebar.warning(
+            "Cambiaste la etapa 1, por eso se reinició la etapa 2 con valores sugeridos. Revísala antes de enviar."
         )
-        save_stage1 = st.form_submit_button("Guardar etapa 1")
-
-    if save_stage1:
-        st.session_state.stage1_channels = edited.astype({"leads": int, "citas": int, "pacientes": int})
-        new_signature = tuple(edited[["leads", "citas", "pacientes"]].to_numpy().flatten())
-
-        if new_signature != st.session_state.stage1_signature:
-            suggested = build_default_summary(st.session_state.stage1_channels)
-            st.session_state.stage2_summary = suggested
-            st.session_state.stage1_signature = new_signature
-            st.sidebar.warning(
-                "Cambiaste la etapa 1, por eso se reinició la etapa 2 con valores sugeridos. Revísala antes de aplicar."
-            )
-        else:
-            st.sidebar.success("Etapa 1 guardada.")
 
 
 def stage2_form() -> None:
     st.sidebar.markdown("### 2) Resumen y pipeline")
     s = st.session_state.stage2_summary
 
-    with st.sidebar.form("stage2_form"):
-        leads_totales = st.number_input("Leads totales", min_value=0, value=int(s["Leads totales"]), step=1)
-        leads_calificados = st.number_input("Leads calificados/contactados", min_value=0, value=int(s["Leads calificados"]), step=1)
-        citas_agendadas = st.number_input("Citas agendadas", min_value=0, value=int(s["Citas agendadas"]), step=1)
-        citas_asistidas = st.number_input("Citas asistidas", min_value=0, value=int(s["Citas asistidas"]), step=1)
-        citas_no_asistidas = st.number_input(
-            "Citas no asistidas", min_value=0, value=int(s["Citas no asistidas"]), step=1
-        )
-        pacientes_cerrados = st.number_input("Pacientes cerrados", min_value=0, value=int(s["Pacientes cerrados"]), step=1)
-        save_stage2 = st.form_submit_button("Guardar etapa 2")
+    leads_totales = st.sidebar.number_input("Leads totales", min_value=0, value=int(s["Leads totales"]), step=1)
+    leads_calificados = st.sidebar.number_input(
+        "Leads calificados/contactados", min_value=0, value=int(s["Leads calificados"]), step=1
+    )
+    citas_agendadas = st.sidebar.number_input("Citas agendadas", min_value=0, value=int(s["Citas agendadas"]), step=1)
+    citas_asistidas = st.sidebar.number_input("Citas asistidas", min_value=0, value=int(s["Citas asistidas"]), step=1)
+    citas_no_asistidas = st.sidebar.number_input(
+        "Citas no asistidas", min_value=0, value=int(s["Citas no asistidas"]), step=1
+    )
+    pacientes_cerrados = st.sidebar.number_input("Pacientes cerrados", min_value=0, value=int(s["Pacientes cerrados"]), step=1)
 
-    if save_stage2:
-        st.session_state.stage2_summary = {
-            "Leads totales": int(leads_totales),
-            "Leads calificados": int(leads_calificados),
-            "Citas agendadas": int(citas_agendadas),
-            "Citas asistidas": int(citas_asistidas),
-            "Citas no asistidas": int(citas_no_asistidas),
-            "Pacientes cerrados": int(pacientes_cerrados),
-        }
-        st.sidebar.success("Etapa 2 guardada.")
+    st.session_state.stage2_summary = {
+        "Leads totales": int(leads_totales),
+        "Leads calificados": int(leads_calificados),
+        "Citas agendadas": int(citas_agendadas),
+        "Citas asistidas": int(citas_asistidas),
+        "Citas no asistidas": int(citas_no_asistidas),
+        "Pacientes cerrados": int(pacientes_cerrados),
+    }
 
 
 def stage3_form() -> None:
     st.sidebar.markdown("### 3) Proyección de ingresos")
     p = st.session_state.stage3_projection
-    with st.sidebar.form("stage3_form"):
-        ticket = st.number_input("Ticket promedio ($)", min_value=0.0, value=float(p["Ticket promedio"]), step=10.0)
-        recovery = st.number_input(
-            "% recuperación de no-shows", min_value=0.0, max_value=100.0, value=float(p["% recuperación"]), step=1.0
-        )
-        save_stage3 = st.form_submit_button("Guardar etapa 3")
+    ticket = st.sidebar.number_input("Ticket promedio ($)", min_value=0.0, value=float(p["Ticket promedio"]), step=10.0)
+    recovery = st.sidebar.number_input(
+        "% recuperación de no-shows", min_value=0.0, max_value=100.0, value=float(p["% recuperación"]), step=1.0
+    )
 
-    if save_stage3:
-        st.session_state.stage3_projection = {"Ticket promedio": float(ticket), "% recuperación": float(recovery)}
-        st.sidebar.success("Etapa 3 guardada.")
+    st.session_state.stage3_projection = {"Ticket promedio": float(ticket), "% recuperación": float(recovery)}
 
 
 def apply_button() -> None:
     st.sidebar.markdown("---")
-    st.sidebar.info("Cuando termines, aplica para validar coherencia entre las 3 etapas.")
-    if st.sidebar.button("Actualizar dashboard", type="primary", use_container_width=True):
+    st.sidebar.info("Al enviar, se valida la coherencia de todos los datos ingresados.")
+    if st.sidebar.button("Enviar", type="primary", use_container_width=True):
         summary = st.session_state.stage2_summary
         channels = st.session_state.stage1_channels
         errors = validate_consistency(channels, summary)
@@ -263,7 +252,7 @@ def apply_button() -> None:
 apply_theme()
 init_state()
 st.sidebar.header("Formulario secuencial")
-st.sidebar.caption("Puedes editar cualquier etapa, pero siempre valida con el botón final.")
+st.sidebar.caption("Completa las 3 etapas en la misma página y presiona Enviar para validar y actualizar.")
 stage1_form()
 stage2_form()
 stage3_form()
@@ -355,6 +344,6 @@ with right:
 
 st.markdown("---")
 st.info(
-    "Recomendación aplicada: 3 formularios secuenciales + botón final de validación. "
-    "Así puedes editar cualquier etapa, pero el dashboard solo se actualiza cuando todo es coherente."
+    "Flujo aplicado: edición continua en 3 etapas + botón único Enviar. "
+    "Al enviar se valida coherencia y solo entonces se actualiza el dashboard."
 )
