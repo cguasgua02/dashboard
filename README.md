@@ -21,7 +21,7 @@ El sistema calcula automáticamente:
 - `Conv. cita %`
 - `Conv. cierre %`
 
-> Si cambias la etapa 1 y guardas, la etapa 2 se reinicia con valores sugeridos para evitar inconsistencias.
+> Si cambias la etapa 1 la etapa 2 se reinicia con valores sugeridos para evitar inconsistencias.
 
 ### Etapa 2: Resumen y pipeline
 Captura:
@@ -54,7 +54,7 @@ Captura:
 Y calcula ingreso adicional potencial.
 
 ## Validaciones cruzadas
-Al pulsar **Actualizar dashboard**, el sistema valida:
+Al pulsar **Enviar**, el sistema valida:
 - suma de leads por canal = leads totales
 - suma de citas por canal = citas agendadas
 - suma de pacientes por canal = pacientes cerrados
