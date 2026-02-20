@@ -72,6 +72,7 @@ Y calcula:
 
 ## KPIs adicionales
 El dashboard muestra también:
+- Interfaz con tema oscuro fijo (no depende del modo claro/oscuro del sistema o navegador).
 - Inversión total (suma gasto publicitario)
 - CPL = inversión total / leads totales
 - CPA = inversión total / ventas
