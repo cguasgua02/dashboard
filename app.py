@@ -336,7 +336,7 @@ def stage2_form() -> None:
         "Leads totales (AUTOMÁTICO)", min_value=0, value=int(s["Leads totales"]), step=1, disabled=True
     )
     leads_calificados = st.sidebar.number_input(
-        "Leads calificados (MODIFICAR)", min_value=0, value=int(s["Leads calificadoS"]), step=1
+        "Leads calificados (MODIFICAR)", min_value=0, value=int(s["Leads calificados"]), step=1
     )
     citas_agendadas = st.sidebar.number_input(
         "Citas agendadas (AUTOMÁTICO)", min_value=0, value=int(s["Citas agendadas"]), step=1, disabled=True
@@ -594,6 +594,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
