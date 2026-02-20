@@ -11,10 +11,11 @@ st.set_page_config(page_title="Dashboard  de Eficiencia Comercial y Retorno de 
 DEFAULT_CHANNELS = pd.DataFrame(
     {
         "Canal": ["Meta Ads", "Google Ads", "Orgánico", "Bases de Datos"],
+        "inversion": [1200.0, 1000.0, 300.0, 200.0],
         "leads": [100, 80, 90, 50],
         "citas": [60, 50, 45, 25],
         "pacientes": [35, 30, 20, 10],
-        "gasto_publicitario": [1200.0, 1000.0, 300.0, 200.0],
+        
     }
 )
 
@@ -294,17 +295,18 @@ def stage1_form() -> None:
         num_rows="fixed",
         disabled=["Canal"],
         column_config={
+            "inversion": st.column_config.NumberColumn(
+                "inversion", min_value=0.0, step=50.0, format="$ %.0f"
+            ),
             "leads": st.column_config.NumberColumn("leads", min_value=0, step=1),
             "citas": st.column_config.NumberColumn("citas", min_value=0, step=1),
             "pacientes": st.column_config.NumberColumn("pacientes", min_value=0, step=1),
-            "gasto_publicitario": st.column_config.NumberColumn(
-                "gasto_publicitario", min_value=0.0, step=50.0, format="$ %.0f"
-            ),
+            
         },
     )
 
     st.session_state.stage1_channels = edited.astype(
-        {"leads": int, "citas": int, "pacientes": int, "gasto_publicitario": float}
+        {"leads": int, "citas": int, "pacientes": int, "inversion": float}
     )
     new_signature = tuple(edited[["leads", "citas", "pacientes"]].to_numpy().flatten())
 
@@ -400,7 +402,7 @@ title_company = company if company else "Tu Empresa"
 ticket_promedio = float(a["ticket"])
 recovery_pct = float(a["recovery"])
 
-total_inversion = float(channels_df["gasto_publicitario"].sum())
+total_inversion = float(channels_df["inversion"].sum())
 total_leads = int(summary["Leads totales"])
 total_ventas = int(summary["Pacientes cerrados"])
 
@@ -574,6 +576,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
