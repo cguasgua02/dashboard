@@ -50,9 +50,9 @@ def compute_rates(summary: dict[str, int]) -> dict[str, float]:
 def compute_pipeline(summary: dict[str, int]) -> pd.DataFrame:
     return pd.DataFrame(
         {
-            "Etapa": ["No Contactados", "Contactado", "Agendado", "Asistió", "Cerrado", "No Show"],
+            "Etapa": ["Leads Totales", "Contactado", "Agendado", "Asistió", "Cerrado", "No Show"],
             "Cantidad": [
-                max(summary["Leads totales"] - summary["Leads calificados"], 0),
+                summary["Leads totales"],
                 summary["Leads calificados"],
                 summary["Citas agendadas"],
                 summary["Citas asistidas"],
@@ -324,7 +324,7 @@ def stage2_form() -> None:
 
     leads_totales = st.sidebar.number_input("Leads totales", min_value=0, value=int(s["Leads totales"]), step=1)
     leads_calificados = st.sidebar.number_input(
-        "Leads calificados/contactados", min_value=0, value=int(s["Leads calificados"]), step=1
+        "Leads calificados", min_value=0, value=int(s["Leads calificados"]), step=1
     )
     citas_agendadas = st.sidebar.number_input("Citas agendadas", min_value=0, value=int(s["Citas agendadas"]), step=1)
     citas_asistidas = st.sidebar.number_input("Citas asistidas", min_value=0, value=int(s["Citas asistidas"]), step=1)
@@ -576,6 +576,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
