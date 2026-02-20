@@ -87,28 +87,53 @@ def apply_theme() -> None:
     st.markdown(
         """
         <style>
-        .stApp { background-color: #0a1033; color: #f0f4ff; }
+        :root, html, body, [data-testid="stAppViewContainer"], .stApp {
+            color-scheme: dark !important;
+            --background-color: #0a1033 !important;
+            --secondary-background-color: #121843 !important;
+            --text-color: #f0f4ff !important;
+            --primary-color: #3f84ff !important;
+        }
+        .stApp { background-color: #0a1033 !important; color: #f0f4ff !important; }
         .block-container { padding-top: 1.1rem; max-width: 1280px; }
         [data-testid="stSidebar"] {
-            background-color: #101a4d;
+            background-color: #101a4d !important;
             border-right: 1px solid rgba(123, 162, 255, 0.25);
         }
         [data-testid="stSidebar"] * { color: #f0f4ff !important; }
+
         .stTextInput input,
         .stNumberInput input,
         [data-baseweb="input"] input,
-        [data-baseweb="input"] > div {
+        [data-baseweb="input"] > div,
+        [data-baseweb="select"] > div,
+        textarea {
             background-color: #121843 !important;
             color: #ffffff !important;
+            border-color: rgba(133, 177, 255, 0.35) !important;
         }
-        .stDataFrame, .stTable {
+
+        [data-testid="stDataEditor"],
+        [data-testid="stDataEditor"] * {
+            background-color: #121843 !important;
+            color: #ffffff !important;
+            border-color: rgba(133, 177, 255, 0.25) !important;
+        }
+
+        .stDataFrame, .stTable, .stMarkdownTable {
             background-color: #121843 !important;
             color: #ffffff !important;
             border-radius: 10px;
         }
-        .stDataFrame [role="gridcell"], .stDataFrame [role="columnheader"] {
+        .stDataFrame [role="gridcell"],
+        .stDataFrame [role="columnheader"],
+        .stTable td,
+        .stTable th,
+        .stMarkdownTable td,
+        .stMarkdownTable th {
             color: #ffffff !important;
             background-color: #121843 !important;
+            border-color: rgba(133, 177, 255, 0.25) !important;
         }
         .module-card {
             background: linear-gradient(145deg, #151d4f 0%, #121843 100%);
