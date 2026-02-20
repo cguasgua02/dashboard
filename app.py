@@ -479,6 +479,9 @@ with left:
         margin=dict(l=10, r=10, t=10, b=10),
         legend_title_text="",
     )
+    fig_pipeline.update_traces(textfont=dict(color="#ffffff"))
+    fig_pipeline.update_xaxes(tickfont=dict(color="#ffffff"), title_font=dict(color="#ffffff"))
+    fig_pipeline.update_yaxes(tickfont=dict(color="#ffffff"), title_font=dict(color="#ffffff"))
     st.plotly_chart(fig_pipeline, use_container_width=True)
 
 with right:
@@ -576,6 +579,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
