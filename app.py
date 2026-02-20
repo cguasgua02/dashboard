@@ -101,6 +101,16 @@ def apply_theme() -> None:
             border-right: 1px solid rgba(123, 162, 255, 0.25);
         }
         [data-testid="stSidebar"] * { color: #f0f4ff !important; }
+        [data-testid="stHeader"] {
+            background: #0a1033 !important;
+            border-bottom: 1px solid rgba(133, 177, 255, 0.15);
+        }
+        [data-testid="stToolbar"] {
+            background: #0a1033 !important;
+        }
+        [data-testid="stToolbar"] * {
+            color: #f0f4ff !important;
+        }
 
         .stTextInput input,
         .stNumberInput input,
@@ -111,6 +121,23 @@ def apply_theme() -> None:
             background-color: #121843 !important;
             color: #ffffff !important;
             border-color: rgba(133, 177, 255, 0.35) !important;
+        }
+
+        .stNumberInput button,
+        [data-testid="stNumberInputStepUp"],
+        [data-testid="stNumberInputStepDown"],
+        [data-testid="stNumberInput"] button {
+            background-color: #121843 !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(133, 177, 255, 0.35) !important;
+        }
+
+        [data-testid="stDataFrame"] [data-testid="stToolbar"],
+        [data-testid="stDataFrame"] [role="toolbar"],
+        [data-testid="stDataEditor"] [role="toolbar"] {
+            background-color: #121843 !important;
+            color: #ffffff !important;
+            border-bottom: 1px solid rgba(133, 177, 255, 0.25) !important;
         }
 
         [data-testid="stDataEditor"],
@@ -176,6 +203,27 @@ def apply_theme() -> None:
             color: #9aa4c5;
             font-size: 0.78rem;
             margin-top: 8px;
+        }
+        .dark-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #121843;
+            color: #ffffff;
+            border: 1px solid rgba(133, 177, 255, 0.25);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .dark-table th, .dark-table td {
+            padding: 10px 12px;
+            border: 1px solid rgba(133, 177, 255, 0.20);
+            background-color: #121843;
+            color: #ffffff;
+            text-align: left;
+        }
+        .dark-table th {
+            background-color: #17215b;
+            color: #eaf0ff;
+            font-weight: 600;
         }
         </style>
         """,
@@ -426,7 +474,8 @@ with left:
     st.plotly_chart(fig_pipeline, use_container_width=True)
 
     st.markdown('<div class="section-box"><h3>Leads por canal + conversiones</h3></div>', unsafe_allow_html=True)
-    st.dataframe(channels_df, use_container_width=True, hide_index=True)
+    table_html = channels_df.to_html(index=False, classes="dark-table", border=0)
+    st.markdown(table_html, unsafe_allow_html=True)
 
 with right:
     st.markdown('<div class="section-box"><h3>Cuellos de botella (calculados)</h3></div>', unsafe_allow_html=True)
