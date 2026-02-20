@@ -50,14 +50,14 @@ def compute_rates(summary: dict[str, int]) -> dict[str, float]:
 def compute_pipeline(summary: dict[str, int]) -> pd.DataFrame:
     return pd.DataFrame(
         {
-            "Etapa": ["Leads Totales", "Contactado", "Agendado", "Asistió", "Cerrado", "No Show"],
+            "Etapa": ["No Show", "Cerrado", "Asistió", "Agendado", "Contactado", "Leads Totales"],
             "Cantidad": [
-                summary["Leads totales"],
-                summary["Leads calificados"],
-                summary["Citas agendadas"],
-                summary["Citas asistidas"],
-                summary["Pacientes cerrados"],
                 summary["Citas no asistidas"],
+                summary["Pacientes cerrados"],
+                summary["Citas asistidas"],
+                summary["Citas agendadas"],
+                summary["Leads calificados"],
+                summary["Leads totales"],
             ],
         }
     )
@@ -576,6 +576,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
