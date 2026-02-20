@@ -204,8 +204,14 @@ def apply_theme() -> None:
             font-size: 0.78rem;
             margin-top: 8px;
         }
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
         .dark-table {
             width: 100%;
+            min-width: 720px;
             border-collapse: collapse;
             background-color: #121843;
             color: #ffffff;
@@ -473,10 +479,6 @@ with left:
     )
     st.plotly_chart(fig_pipeline, use_container_width=True)
 
-    st.markdown('<div class="section-box"><h3>Leads por canal + conversiones</h3></div>', unsafe_allow_html=True)
-    table_html = channels_df.to_html(index=False, classes="dark-table", border=0)
-    st.markdown(table_html, unsafe_allow_html=True)
-
 with right:
     st.markdown('<div class="section-box"><h3>Cuellos de botella (calculados)</h3></div>', unsafe_allow_html=True)
     bottlenecks = pd.DataFrame(
@@ -506,6 +508,10 @@ with right:
     module_card("Dinero perdido", f"${dinero_perdido:,.0f}", "No-shows x Ticket promedio")
     module_card("Potencial recuperable anual", f"${potencial_recuperable_anual:,.0f}", "Potencial recuperable x 12")
     module_card("Dinero perdido anual", f"${dinero_perdido_anual:,.0f}", "Dinero perdido x 12")
+
+st.markdown('<div class="section-box"><h3>Leads por canal + conversiones</h3></div>', unsafe_allow_html=True)
+table_html = channels_df.to_html(index=False, classes="dark-table", border=0)
+st.markdown(f'<div class="table-scroll">{table_html}</div>', unsafe_allow_html=True)
 
 
 # Bloques finales: Feedback + Oportunidad Estratégica
