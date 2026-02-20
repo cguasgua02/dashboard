@@ -133,6 +133,15 @@ def apply_theme() -> None:
             border: 1px solid rgba(133, 177, 255, 0.35) !important;
         }
 
+        .stNumberInput input:disabled,
+        .stTextInput input:disabled,
+        input[disabled],
+        [data-baseweb="input"] input:disabled {
+            -webkit-text-fill-color: #ffffff !important;
+            color: #ffffff !important;
+            opacity: 1 !important;
+        }
+
         [data-testid="stDataFrame"] [data-testid="stToolbar"],
         [data-testid="stDataFrame"] [role="toolbar"],
         [data-testid="stDataEditor"] [role="toolbar"] {
@@ -585,6 +594,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
