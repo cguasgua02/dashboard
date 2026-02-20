@@ -333,29 +333,29 @@ def stage2_form() -> None:
 
     st.sidebar.caption("Leads totales, Citas agendadas y Pacientes cerrados se calculan automáticamente desde etapa 1.")
     leads_totales = st.sidebar.number_input(
-        "Leads totales (AUTOMATICO)", min_value=0, value=int(s["Leads totales (AUTOMATICO)"]), step=1, disabled=True
+        "Leads totales (AUTOMÁTICO)", min_value=0, value=int(s["Leads totales"]), step=1, disabled=True
     )
     leads_calificados = st.sidebar.number_input(
-        "Leads calificados (MODIFICAR)", min_value=0, value=int(s["Leads calificados (MODIFICAR)"]), step=1
+        "Leads calificados (MODIFICAR)", min_value=0, value=int(s["Leads calificadoS"]), step=1
     )
     citas_agendadas = st.sidebar.number_input(
-        "Citas agendadas (AUTOMÁTICO)", min_value=0, value=int(s["Citas agendadas (AUTOMÁTICO)"]), step=1, disabled=True
+        "Citas agendadas (AUTOMÁTICO)", min_value=0, value=int(s["Citas agendadas"]), step=1, disabled=True
     )
-    citas_asistidas = st.sidebar.number_input("Citas asistidas (MODIFICAR)", min_value=0, value=int(s["Citas asistidas (MODIFICAR)"]), step=1)
+    citas_asistidas = st.sidebar.number_input("Citas asistidas (MODIFICAR)", min_value=0, value=int(s["Citas asistidas"]), step=1)
     citas_no_asistidas = st.sidebar.number_input(
-        "Citas no asistidas (MODIFICAR)", min_value=0, value=int(s["Citas no asistidas (MODIFICAR)"]), step=1
+        "Citas no asistidas (MODIFICAR)", min_value=0, value=int(s["Citas no asistidas"]), step=1
     )
     pacientes_cerrados = st.sidebar.number_input(
-        "Pacientes cerrados (AUTOMÁTICO)", min_value=0, value=int(s["Pacientes cerrados (AUTOMÁTICO)"]), step=1, disabled=True
+        "Pacientes cerrados (AUTOMÁTICO)", min_value=0, value=int(s["Pacientes cerrados"]), step=1, disabled=True
     )
 
     st.session_state.stage2_summary = {
-        "Leads totales (AUTOMATICO)": int(leads_totales),
-        "Leads calificados (MODIFICAR)": int(leads_calificados),
-        "Citas agendadas (AUTOMÁTICO)": int(citas_agendadas),
-        "Citas asistidas (MODIFICAR)": int(citas_asistidas),
-        "Citas no asistidas (MODIFICAR)": int(citas_no_asistidas),
-        "Pacientes cerrados (AUTOMÁTICO)": int(pacientes_cerrados),
+        "Leads totales": int(leads_totales),
+        "Leads calificados": int(leads_calificados),
+        "Citas agendadas": int(citas_agendadas),
+        "Citas asistidas": int(citas_asistidas),
+        "Citas no asistidas": int(citas_no_asistidas),
+        "Pacientes cerrados": int(pacientes_cerrados),
     }
 
 
@@ -594,6 +594,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
