@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-st.set_page_config(page_title="Diagnóstico de Conversión Clínica", layout="wide")
+st.set_page_config(page_title="Dashboard  de Eficiencia Comercial y Retorno de Inversión (ROI) para", layout="wide")
 
 DEFAULT_CHANNELS = pd.DataFrame(
     {
@@ -49,7 +49,7 @@ def compute_rates(summary: dict[str, int]) -> dict[str, float]:
 def compute_pipeline(summary: dict[str, int]) -> pd.DataFrame:
     return pd.DataFrame(
         {
-            "Etapa": ["Nuevo", "Contactado", "Agendado", "Asistió", "Cerrado", "No Show"],
+            "Etapa": ["No Contactados", "Contactado", "Agendado", "Asistió", "Cerrado", "No Show"],
             "Cantidad": [
                 max(summary["Leads totales"] - summary["Leads calificados"], 0),
                 summary["Leads calificados"],
@@ -574,5 +574,6 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
