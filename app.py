@@ -464,7 +464,7 @@ with r5:
 left, right = st.columns([1.4, 1])
 
 with left:
-    st.markdown('<div class="section-box"><h3>Pipeline (calculado desde etapa 2)</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-box"><h3>Pipeline </h3></div>', unsafe_allow_html=True)
     fig_pipeline = px.funnel(
         pipeline_df,
         x="Cantidad",
@@ -475,7 +475,7 @@ with left:
     fig_pipeline.update_layout(
         paper_bgcolor="#121843",
         plot_bgcolor="#121843",
-        font_color="#eaf0ff",
+        font_color="#f5f7fc",
         margin=dict(l=10, r=10, t=10, b=10),
         legend_title_text="",
     )
@@ -576,6 +576,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
