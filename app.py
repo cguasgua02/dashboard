@@ -574,7 +574,5 @@ st.markdown(
 )
 
 st.markdown("---")
-st.info(
-    "Flujo aplicado: edición continua en 3 etapas + botón único Enviar. "
-    "Al enviar se valida coherencia y solo entonces se actualiza el dashboard."
-)
+
+
