@@ -499,7 +499,7 @@ with right:
     st.markdown('<div class="section-box"><h3>Facturación y ROAS</h3></div>', unsafe_allow_html=True)
     module_card("Facturación actual", f"${facturacion_actual:,.0f}", "Ventas x Ticket promedio")
     module_card("ROAS", f"{roas:,.2f}x", "Facturación / Inversión")
-    st.markdown(f"**Por cada $1 dolar invertido, generas ${roas:,.2f}.**")
+    st.markdown(f"**Por cada \$ 1 dolar invertido, generas ${roas:,.2f}.**")
 
     st.markdown('<div class="section-box"><h3>Proyección de ingresos</h3></div>', unsafe_allow_html=True)
     p1, p2 = st.columns(2)
@@ -576,6 +576,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
