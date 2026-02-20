@@ -475,9 +475,10 @@ with left:
     fig_pipeline.update_layout(
         paper_bgcolor="#121843",
         plot_bgcolor="#121843",
-        font_color="#f5f7fc",
+        font=dict(color="#ffffff"),
         margin=dict(l=10, r=10, t=10, b=10),
         legend_title_text="",
+        legend=dict(font=dict(color="#ffffff"), title=dict(font=dict(color="#ffffff"))),
     )
     fig_pipeline.update_traces(textfont=dict(color="#ffffff"))
     fig_pipeline.update_xaxes(tickfont=dict(color="#ffffff"), title_font=dict(color="#ffffff"))
@@ -485,7 +486,7 @@ with left:
     st.plotly_chart(fig_pipeline, use_container_width=True)
 
 with right:
-    st.markdown('<div class="section-box"><h3>Cuellos de botella (calculados)</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-box"><h3>Cuellos de botella</h3></div>', unsafe_allow_html=True)
     bottlenecks = pd.DataFrame(
         {
             "Etapa": ["Lead → Cita", "Cita → Asistencia", "Asistencia → Cierre", "Cierre real"],
@@ -579,6 +580,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
