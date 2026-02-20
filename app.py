@@ -319,20 +319,25 @@ def stage1_form() -> None:
 
 
 def stage2_form() -> None:
-    st.sidebar.markdown("### 2) Resumen y pipeline")
+    st.sidebar.markdown("### 2) Resumen y pipeline ")
     s = st.session_state.stage2_summary
 
-    leads_totales = st.sidebar.number_input("Leads totales", min_value=0, value=int(s["Leads totales"]), step=1)
-    leads_calificados = st.sidebar.number_input(
-        "Leads calificados", min_value=0, value=int(s["Leads calificados"]), step=1
+    st.sidebar.caption("Leads totales, Citas agendadas y Pacientes cerrados se calculan automáticamente desde etapa 1.")
+    leads_totales = st.sidebar.number_input(
+        "Leads totales", min_value=0, value=int(s["Leads totales"]), step=1, disabled=True
     )
-    citas_agendadas = st.sidebar.number_input("Citas agendadas", min_value=0, value=int(s["Citas agendadas"]), step=1)
+    leads_calificados = st.sidebar.number_input(
+        "Leads calificados/contactados", min_value=0, value=int(s["Leads calificados"]), step=1
+    )
+    citas_agendadas = st.sidebar.number_input(
+        "Citas agendadas", min_value=0, value=int(s["Citas agendadas"]), step=1, disabled=True
+    )
     citas_asistidas = st.sidebar.number_input("Citas asistidas", min_value=0, value=int(s["Citas asistidas"]), step=1)
     citas_no_asistidas = st.sidebar.number_input(
         "Citas no asistidas", min_value=0, value=int(s["Citas no asistidas"]), step=1
     )
     pacientes_cerrados = st.sidebar.number_input(
-        "Pacientes cerrados", min_value=0, value=int(s["Pacientes cerrados"]), step=1
+        "Pacientes cerrados", min_value=0, value=int(s["Pacientes cerrados"]), step=1, disabled=True
     )
 
     st.session_state.stage2_summary = {
@@ -383,7 +388,7 @@ def apply_button() -> None:
 apply_theme()
 init_state()
 st.sidebar.header("Formulario secuencial")
-st.sidebar.caption("Completa las 3 etapas en la misma página y presiona Enviar para validar y actualizar.")
+st.sidebar.caption("Completa las 3 etapas en la misma página y presiona Enviar para conocer la eficiencia comercial de tu clínica.")
 stage_company()
 stage1_form()
 stage2_form()
@@ -580,6 +585,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
