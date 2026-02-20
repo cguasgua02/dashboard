@@ -421,7 +421,7 @@ channels_df["Conv. cierre %"] = channels_df.apply(
     lambda row: format_percentage(row["pacientes"], row["citas"]), axis=1
 )
 
-st.title(f"Diagnóstico para Clínica {title_company}")
+st.title(f"Dashboard  de Eficiencia Comercial y Retorno de Inversión (ROI) para {title_company}")
 st.caption("Flujo en 3 etapas: canales → resumen/pipeline → proyección, con validaciones cruzadas.")
 
 k1, k2, k3, k4 = st.columns(4)
@@ -574,6 +574,7 @@ st.markdown(
 )
 
 st.markdown("---")
+
 
 
 
